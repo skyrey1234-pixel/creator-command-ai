@@ -1,0 +1,60 @@
+{
+  "name": "ContentItem",
+  "type": "object",
+  "properties": {
+    "day": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "reel",
+        "carousel",
+        "story",
+        "post",
+        "live"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "concept": {
+      "type": "string"
+    },
+    "hook": {
+      "type": "string"
+    },
+    "caption": {
+      "type": "string"
+    },
+    "cta": {
+      "type": "string"
+    },
+    "hashtags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "best_time": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "idea",
+        "scheduled",
+        "posted"
+      ],
+      "default": "idea"
+    }
+  },
+  "required": [
+    "day",
+    "type",
+    "title"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "name": "CreatorProfile",
+  "type": "object",
+  "properties": {
+    "brand_name": {
+      "type": "string"
+    },
+    "niche": {
+      "type": "string"
+    },
+    "personality": {
+      "type": "string"
+    },
+    "voice": {
+      "type": "string"
+    },
+    "visual_style": {
+      "type": "string"
+    },
+    "favorite_phrases": {
+      "type": "string"
+    },
+    "goals": {
+      "type": "string"
+    },
+    "products": {
+      "type": "string"
+    },
+    "boundaries": {
+      "type": "string"
+    },
+    "audience_description": {
+      "type": "string"
+    },
+    "follower_count": {
+      "type": "number"
+    },
+    "avg_views": {
+      "type": "number"
+    },
+    "engagement_rate": {
+      "type": "number"
+    },
+    "primary_platforms": {
+      "type": "string"
+    },
+    "tone_tags": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "brand_name",
+    "niche"
+  ]
+}

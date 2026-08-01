@@ -1,0 +1,82 @@
+{
+  "name": "ReelProject",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "idea": {
+      "type": "string"
+    },
+    "hook": {
+      "type": "string"
+    },
+    "opening": {
+      "type": "string"
+    },
+    "cuts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "on_screen_text": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "caption": {
+      "type": "string"
+    },
+    "music_style": {
+      "type": "string"
+    },
+    "thumbnail_idea": {
+      "type": "string"
+    },
+    "video_length": {
+      "type": "string"
+    },
+    "cta": {
+      "type": "string"
+    },
+    "viral_score": {
+      "type": "number"
+    },
+    "score_hook": {
+      "type": "number"
+    },
+    "score_pacing": {
+      "type": "number"
+    },
+    "score_clarity": {
+      "type": "number"
+    },
+    "score_emotion": {
+      "type": "number"
+    },
+    "score_shareability": {
+      "type": "number"
+    },
+    "score_audience_fit": {
+      "type": "number"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "posted"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "title",
+    "idea"
+  ]
+}

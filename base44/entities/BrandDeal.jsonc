@@ -1,0 +1,34 @@
+{
+  "name": "BrandDeal",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "media_kit",
+        "pitch",
+        "rate_card",
+        "proposal"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "headline": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "packages": {
+      "type": "string"
+    },
+    "pricing_summary": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "title"
+  ]
+}
