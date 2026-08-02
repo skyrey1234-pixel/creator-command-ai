@@ -1,0 +1,111 @@
+{
+  "name": "RepurposeProject",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "voice_note",
+        "text",
+        "video",
+        "podcast"
+      ],
+      "default": "voice_note"
+    },
+    "source_text": {
+      "type": "string"
+    },
+    "reel_script": {
+      "type": "string"
+    },
+    "carousel_slides": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "story_frames": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "caption": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "promo_post": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "published"
+      ],
+      "default": "ready"
+    }
+  },
+  "required": [
+    "title",
+    "source_text"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
