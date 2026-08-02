@@ -1,0 +1,103 @@
+{
+  "name": "AgencyClient",
+  "type": "object",
+  "properties": {
+    "client_name": {
+      "type": "string"
+    },
+    "contact_email": {
+      "type": "string",
+      "format": "email"
+    },
+    "brand_name": {
+      "type": "string"
+    },
+    "niche": {
+      "type": "string"
+    },
+    "goals": {
+      "type": "string"
+    },
+    "monthly_fee": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "lead",
+        "onboarding",
+        "active",
+        "paused",
+        "churned"
+      ],
+      "default": "onboarding"
+    },
+    "next_review": {
+      "type": "string",
+      "format": "date"
+    },
+    "monthly_plan": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_name",
+    "brand_name"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
