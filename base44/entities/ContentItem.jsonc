@@ -52,6 +52,31 @@
       "type": "string",
       "format": "date"
     },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "instagram",
+        "tiktok",
+        "youtube",
+        "other"
+      ],
+      "default": "instagram"
+    },
+    "scheduled_time": {
+      "type": "string"
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "review",
+        "approved"
+      ],
+      "default": "draft"
+    },
+    "external_post_url": {
+      "type": "string"
+    },
     "status": {
       "type": "string",
       "enum": [
