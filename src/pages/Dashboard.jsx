@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { generateDailyPlan, loadProfile } from '@/lib/creatorAI';
+import { loadSubscription, PLAN_CATALOG } from '@/lib/subscription';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Clock, Lightbulb, Wand2, ArrowRight, RefreshCw, CalendarDays } from 'lucide-react';
+import { BriefcaseBusiness, CheckCircle2, Clapperboard, Crown, Sparkles, Clock, Lightbulb, Wand2, ArrowRight, RefreshCw, CalendarDays } from 'lucide-react';
 
 const typeMeta = {
   content: { icon: Sparkles, tint: 'text-violet-300 bg-violet-500/10' },
@@ -26,9 +27,15 @@ export default function Dashboard() {
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
+  const [reels, setReels] = useState([]);
+  const [deals, setDeals] = useState([]);
+  const [subscription, setSubscription] = useState(null);
 
   useEffect(() => {
     loadProfile().then(setProfile);
+    loadSubscription().then(setSubscription);
+    base44.entities.ReelProject.list('-created_date', 10).then(setReels).catch(() => {});
+    base44.entities.BrandDeal.list('-updated_date', 25).then(setDeals).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -64,6 +71,14 @@ export default function Dashboard() {
     );
   }
 
+  const planKey = subscription?.plan_key || 'free';
+  const growthSteps = [
+    { label: 'Brand Profile', detail: 'Your strategy source of truth', done: Boolean(profile?.onboarding_complete), to: '/brand-brain', icon: Sparkles },
+    { label: 'Seven-day plan', detail: items.length ? items.length + ' ideas saved' : 'Generate your first week', done: items.length > 0, to: '/planner', icon: CalendarDays },
+    { label: 'Reel production', detail: reels.length ? reels.length + ' scripts saved' : 'Turn an idea into a script', done: reels.length > 0, to: '/reel-builder', icon: Clapperboard },
+    { label: 'Deal pipeline', detail: deals.length ? deals.length + ' opportunities or assets' : 'Start tracking revenue', done: deals.length > 0, to: '/deals', icon: BriefcaseBusiness },
+  ];
+
   return (
     <div className="space-y-8">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
@@ -71,19 +86,24 @@ export default function Dashboard() {
           <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Today's Command Center</div>
           <h1 className="font-display text-3xl sm:text-4xl font-bold mt-1">Hi {profile.brand_name} 👋</h1>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => {
-            setLoading(true);
-            generateDailyPlan(profile)
-              .then(setPlan)
-              .finally(() => setLoading(false));
-          }}
-          disabled={loading}
-        >
-          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Refresh plan
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link to="/plans"><Crown className="w-4 h-4 mr-2" /> {PLAN_CATALOG[planKey].name}</Link>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setLoading(true);
+              generateDailyPlan(profile)
+                .then(setPlan)
+                .finally(() => setLoading(false));
+            }}
+            disabled={loading}
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh plan
+          </Button>
+        </div>
       </header>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -92,6 +112,29 @@ export default function Dashboard() {
         <Stat label="Engagement" value={profile.engagement_rate ? `${profile.engagement_rate}%` : '—'} />
         <Stat label="Niche" value={profile.niche || '—'} />
       </div>
+
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Your growth loop</div>
+            <h2 className="font-display text-xl font-bold mt-1">From brand clarity to paid opportunities</h2>
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {growthSteps.map(({ label, detail, done, to, icon: Icon }) => (
+            <Link key={label} to={to} className="rounded-2xl border border-border bg-card/60 p-4 hover:border-primary/40 transition-colors group">
+              <div className="flex items-center justify-between">
+                <div className={done ? 'w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-300 flex items-center justify-center' : 'w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center'}>
+                  {done ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                </div>
+                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+              </div>
+              <div className="font-medium mt-3">{label}</div>
+              <div className="text-xs text-muted-foreground mt-1">{detail}</div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {loading && !plan ? (
         <div className="rounded-3xl border border-border bg-card/60 p-10 text-center text-muted-foreground">
