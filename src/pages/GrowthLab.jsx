@@ -15,7 +15,6 @@ import {
   Copy,
   Crown,
   Instagram,
-  Loader2,
   Mic,
   RefreshCw,
   Sparkles,
