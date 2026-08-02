@@ -8,13 +8,31 @@
     "idea": {
       "type": "string"
     },
+    "content_item_id": {
+      "type": "string"
+    },
     "hook": {
       "type": "string"
     },
     "opening": {
       "type": "string"
     },
+    "spoken_script": {
+      "type": "string"
+    },
     "cuts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "shot_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "b_roll": {
       "type": "array",
       "items": {
         "type": "string"
@@ -39,6 +57,9 @@
       "type": "string"
     },
     "cta": {
+      "type": "string"
+    },
+    "production_notes": {
       "type": "string"
     },
     "viral_score": {
@@ -78,5 +99,57 @@
   "required": [
     "title",
     "idea"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }
