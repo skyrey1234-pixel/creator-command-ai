@@ -37,7 +37,7 @@ export default async function (req: Request) {
         const base44 = createClientFromRequest(req);
         const priceId = subscription.items.data[0]?.price?.id || "";
         const periodEnd = subscription.items.data[0]?.current_period_end;
-        const data = {
+        const data: Record<string, unknown> = {
           user_email: userEmail,
           user_id: userId || "",
           plan_key: event.type === "customer.subscription.deleted" ? "free" : planKey,
@@ -46,8 +46,8 @@ export default async function (req: Request) {
             typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id,
           stripe_subscription_id: subscription.id,
           stripe_price_id: priceId,
-          current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
         };
+        if (periodEnd) data.current_period_end = new Date(periodEnd * 1000).toISOString();
 
         const existing = await base44.asServiceRole.entities.Subscription.filter(
           { user_email: userEmail },
