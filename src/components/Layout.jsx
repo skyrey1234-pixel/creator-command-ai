@@ -1,6 +1,6 @@
 import React from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Sparkles, LayoutDashboard, CalendarDays, Clapperboard, Bot, DollarSign, UserCog, LogOut } from 'lucide-react';
+import { NavLink, Outlet } from 'react-router-dom';
+import { BriefcaseBusiness, Crown, Sparkles, LayoutDashboard, CalendarDays, Clapperboard, Bot, DollarSign, UserCog, LogOut } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const nav = [
@@ -8,13 +8,13 @@ const nav = [
   { to: '/planner', label: 'Content Planner', icon: CalendarDays },
   { to: '/reel-builder', label: 'Reel Builder', icon: Clapperboard },
   { to: '/twin', label: 'Creator Twin', icon: Bot },
+  { to: '/deals', label: 'Brand Deals', icon: BriefcaseBusiness },
   { to: '/monetize', label: 'Monetize', icon: DollarSign },
-  { to: '/brand-brain', label: 'Brand Brain', icon: UserCog },
+  { to: '/brand-brain', label: 'Brand Profile', icon: UserCog },
+  { to: '/plans', label: 'Plans', icon: Crown },
 ];
 
 export default function Layout() {
-  const navigate = useNavigate();
-
   const handleLogout = async () => {
     await base44.auth.logout();
     window.location.href = '/login';
