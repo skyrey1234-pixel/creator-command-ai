@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { BriefcaseBusiness, Crown, Sparkles, LayoutDashboard, CalendarDays, Clapperboard, Bot, DollarSign, UserCog, LogOut } from 'lucide-react';
+import { BriefcaseBusiness, Building2, Crown, Sparkles, LayoutDashboard, CalendarDays, Clapperboard, Bot, DollarSign, UserCog, LogOut, TrendingUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const nav = [
@@ -8,8 +8,10 @@ const nav = [
   { to: '/planner', label: 'Content Planner', icon: CalendarDays },
   { to: '/reel-builder', label: 'Reel Builder', icon: Clapperboard },
   { to: '/twin', label: 'Creator Twin', icon: Bot },
+  { to: '/growth', label: 'Growth Lab', icon: TrendingUp },
   { to: '/deals', label: 'Brand Deals', icon: BriefcaseBusiness },
   { to: '/monetize', label: 'Monetize', icon: DollarSign },
+  { to: '/business', label: 'Business OS', icon: Building2 },
   { to: '/brand-brain', label: 'Brand Profile', icon: UserCog },
   { to: '/plans', label: 'Plans', icon: Crown },
 ];
