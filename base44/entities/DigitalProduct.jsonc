@@ -1,0 +1,119 @@
+{
+  "name": "DigitalProduct",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "product_type": {
+      "type": "string",
+      "enum": [
+        "guide",
+        "course",
+        "membership",
+        "consultation",
+        "template",
+        "community",
+        "other"
+      ],
+      "default": "guide"
+    },
+    "audience": {
+      "type": "string"
+    },
+    "promise": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number",
+      "default": 0
+    },
+    "outline": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "landing_headline": {
+      "type": "string"
+    },
+    "landing_copy": {
+      "type": "string"
+    },
+    "launch_plan": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "checkout_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "idea",
+        "building",
+        "ready",
+        "selling"
+      ],
+      "default": "idea"
+    }
+  },
+  "required": [
+    "title",
+    "product_type"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
