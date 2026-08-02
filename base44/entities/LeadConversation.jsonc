@@ -1,0 +1,127 @@
+{
+  "name": "LeadConversation",
+  "type": "object",
+  "properties": {
+    "contact_name": {
+      "type": "string"
+    },
+    "contact_handle": {
+      "type": "string"
+    },
+    "contact_email": {
+      "type": "string",
+      "format": "email"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "instagram",
+        "email",
+        "tiktok",
+        "linkedin",
+        "other"
+      ],
+      "default": "instagram"
+    },
+    "lead_type": {
+      "type": "string",
+      "enum": [
+        "brand",
+        "customer",
+        "collaboration",
+        "fan",
+        "spam"
+      ],
+      "default": "brand"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "new",
+        "qualified",
+        "reply_ready",
+        "contacted",
+        "won",
+        "closed"
+      ],
+      "default": "new"
+    },
+    "estimated_value": {
+      "type": "number",
+      "default": 0
+    },
+    "incoming_message": {
+      "type": "string"
+    },
+    "ai_reply": {
+      "type": "string"
+    },
+    "follow_up": {
+      "type": "string"
+    },
+    "next_follow_up": {
+      "type": "string",
+      "format": "date"
+    },
+    "last_contacted_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "contact_name",
+    "incoming_message"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
