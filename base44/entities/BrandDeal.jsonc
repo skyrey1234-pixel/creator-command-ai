@@ -5,6 +5,7 @@
     "kind": {
       "type": "string",
       "enum": [
+        "opportunity",
         "media_kit",
         "pitch",
         "rate_card",
@@ -14,10 +15,48 @@
     "title": {
       "type": "string"
     },
+    "brand_name": {
+      "type": "string"
+    },
+    "contact_name": {
+      "type": "string"
+    },
+    "contact_email": {
+      "type": "string",
+      "format": "email"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "lead",
+        "pitch_ready",
+        "pitched",
+        "negotiating",
+        "won",
+        "lost"
+      ],
+      "default": "lead"
+    },
+    "deal_value": {
+      "type": "number"
+    },
+    "deliverables": {
+      "type": "string"
+    },
+    "next_follow_up": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    },
     "headline": {
       "type": "string"
     },
     "body": {
+      "type": "string"
+    },
+    "follow_up_body": {
       "type": "string"
     },
     "packages": {
@@ -25,10 +64,70 @@
     },
     "pricing_summary": {
       "type": "string"
+    },
+    "outreach_generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_contacted_at": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": [
     "kind",
     "title"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }
