@@ -1,0 +1,116 @@
+{
+  "name": "TrendMatch",
+  "type": "object",
+  "properties": {
+    "platform": {
+      "type": "string",
+      "enum": [
+        "instagram",
+        "tiktok",
+        "youtube",
+        "cross_platform"
+      ],
+      "default": "instagram"
+    },
+    "trend_name": {
+      "type": "string"
+    },
+    "signal": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "fit_score": {
+      "type": "number"
+    },
+    "urgency": {
+      "type": "string",
+      "enum": [
+        "post_today",
+        "this_week",
+        "watch",
+        "skip"
+      ],
+      "default": "this_week"
+    },
+    "fit_reason": {
+      "type": "string"
+    },
+    "original_angle": {
+      "type": "string"
+    },
+    "avoid_reason": {
+      "type": "string"
+    },
+    "hook": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "saved",
+        "used",
+        "dismissed"
+      ],
+      "default": "new"
+    }
+  },
+  "required": [
+    "trend_name",
+    "fit_score"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
