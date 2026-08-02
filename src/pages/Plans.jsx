@@ -15,6 +15,7 @@ const order = ['free', 'pro', 'studio'];
 export default function Plans() {
   const [searchParams] = useSearchParams();
   const [subscription, setSubscription] = useState(null);
+  const [billingReady, setBillingReady] = useState(null);
   const [busy, setBusy] = useState('');
   const [message, setMessage] = useState(
     searchParams.get('checkout') === 'success'
@@ -26,7 +27,13 @@ export default function Plans() {
   const [error, setError] = useState('');
 
   const refresh = async () => {
-    setSubscription(await loadSubscription());
+    const [currentSubscription, statusResponse] = await Promise.all([
+      loadSubscription(),
+      base44.functions.invoke('billing-status', {}).catch(() => null),
+    ]);
+    setSubscription(currentSubscription);
+    const status = unwrapFunctionResult(statusResponse);
+    setBillingReady(Boolean(status?.configured));
   };
 
   useEffect(() => {
@@ -94,6 +101,12 @@ export default function Plans() {
           Every plan keeps your Brand Profile. Paid plans unlock the volume needed to publish consistently and close more deals.
         </p>
       </header>
+
+      <div className={billingReady ? "rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200" : "rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100"}>
+        {billingReady
+          ? 'Secure Stripe checkout and subscription updates are active.'
+          : 'Free accounts are active. Paid upgrade requests are saved until Stripe is securely connected by the app owner.'}
+      </div>
 
       {message && (
         <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
