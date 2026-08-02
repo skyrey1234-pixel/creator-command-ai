@@ -1,0 +1,9 @@
+{
+  "name": "Creator Command AI",
+  "short_name": "Creator Command",
+  "description": "A creator growth and monetization operating system.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0912",
+  "theme_color": "#8b5cf6"
+}
