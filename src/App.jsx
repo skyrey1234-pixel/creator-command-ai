@@ -14,6 +14,8 @@ import ContentPlanner from '@/pages/ContentPlanner';
 import ReelBuilder from '@/pages/ReelBuilder';
 import CreatorTwin from '@/pages/CreatorTwin';
 import Monetize from '@/pages/Monetize';
+import Deals from '@/pages/Deals';
+import Plans from '@/pages/Plans';
 import BrandBrain from '@/pages/BrandBrain';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -56,8 +58,10 @@ const AuthenticatedApp = () => {
           <Route path="/planner" element={<ContentPlanner />} />
           <Route path="/reel-builder" element={<ReelBuilder />} />
           <Route path="/twin" element={<CreatorTwin />} />
+          <Route path="/deals" element={<Deals />} />
           <Route path="/monetize" element={<Monetize />} />
           <Route path="/brand-brain" element={<BrandBrain />} />
+          <Route path="/plans" element={<Plans />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
