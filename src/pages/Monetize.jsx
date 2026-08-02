@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { DollarSign, FileText, Mail, Wand2, ArrowRight, Sparkles, Check } from 'lucide-react';
+import { BriefcaseBusiness, DollarSign, FileText, Mail, Wand2, ArrowRight, Sparkles, Check } from 'lucide-react';
 
 function Card({ children, className = '' }) {
   return <div className={`rounded-3xl border border-border bg-card/60 p-6 card-glow ${className}`}>{children}</div>;
@@ -79,9 +79,13 @@ export default function Monetize() {
       await base44.entities.BrandDeal.create({
         kind: 'pitch',
         title: `Pitch → ${pitchForm.brand}`,
+        brand_name: pitchForm.brand,
+        stage: 'pitch_ready',
+        deliverables: pitchForm.goal,
         headline: res.subject,
         body: res.body,
-        pricing_summary: res.follow_up,
+        follow_up_body: res.follow_up,
+        outreach_generated_at: new Date().toISOString(),
       });
     } finally {
       setPitchLoading(false);
@@ -104,6 +108,9 @@ export default function Monetize() {
         </div>
         <h1 className="font-display text-3xl font-bold mt-1">Turn followers into income</h1>
         <p className="text-muted-foreground mt-1">Price your deals, build your media kit, and pitch brands — all in your voice.</p>
+        <Button asChild variant="outline" size="sm" className="mt-4">
+          <Link to="/deals"><BriefcaseBusiness className="w-4 h-4 mr-2" /> Open deal pipeline</Link>
+        </Button>
       </header>
 
       {!profile && (
