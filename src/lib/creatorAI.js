@@ -19,6 +19,10 @@ Goals: ${p?.goals || ''}
 Products/Offers: ${p?.products || ''}
 Boundaries: ${p?.boundaries || ''}
 Audience: ${p?.audience_description || ''}
+Value proposition: ${p?.value_proposition || ''}
+Content pillars: ${Array.isArray(p?.content_pillars) ? p.content_pillars.join(', ') : p?.content_pillars || ''}
+Monetization goal: ${p?.monetization_goal || ''}
+Posting frequency: ${p?.posting_frequency || ''}
 Followers: ${p?.follower_count ?? 'n/a'}
 Avg views: ${p?.avg_views ?? 'n/a'}
 Engagement rate: ${p?.engagement_rate ?? 'n/a'}%`;
@@ -97,13 +101,17 @@ export async function buildReel(idea, profile) {
     properties: {
       hook: { type: 'string' },
       opening: { type: 'string' },
+      spoken_script: { type: 'string' },
       cuts: { type: 'array', items: { type: 'string' } },
+      shot_list: { type: 'array', items: { type: 'string' } },
+      b_roll: { type: 'array', items: { type: 'string' } },
       on_screen_text: { type: 'array', items: { type: 'string' } },
       caption: { type: 'string' },
       music_style: { type: 'string' },
       thumbnail_idea: { type: 'string' },
       video_length: { type: 'string' },
       cta: { type: 'string' },
+      production_notes: { type: 'string' },
       viral_score: { type: 'number' },
       score_hook: { type: 'number' },
       score_pacing: { type: 'number' },
@@ -115,7 +123,29 @@ export async function buildReel(idea, profile) {
     },
   };
   return llm(
-    `${profileContext(profile)}\n\nReel idea: "${idea}"\n\nBuild a viral Reel blueprint for this creator. Provide the strongest opening hook, where to cut the video (beat-by-beat), on-screen text lines, a caption in their voice, music style, thumbnail idea, ideal video length, and ending CTA. Then score the Reel's viral potential out of 100 (viral_score) and break it down into six sub-scores (0-100): score_hook, score_pacing, score_clarity, score_emotion, score_shareability, score_audience_fit. Add a one-sentence summary of how to improve it.`,
+    `${profileContext(profile)}\n\nReel idea: "${idea}"\n\nBuild a complete, film-ready Reel script for this creator. Provide the strongest opening hook, a word-for-word spoken script, beat-by-beat cuts, a practical shot list, B-roll ideas, on-screen text lines, caption in their voice, music style, thumbnail idea, ideal video length, ending CTA, and concise production notes. Then score the Reel's viral potential out of 100 (viral_score) and break it down into six sub-scores (0-100): score_hook, score_pacing, score_clarity, score_emotion, score_shareability, score_audience_fit. Add a one-sentence summary of how to improve it.`,
+    schema
+  );
+}
+
+export async function generateDealOutreach(profile, deal) {
+  const schema = {
+    type: 'object',
+    properties: {
+      subject: { type: 'string' },
+      body: { type: 'string' },
+      follow_up: { type: 'string' },
+      angle: { type: 'string' },
+    },
+  };
+  return llm(
+    profileContext(profile) +
+      '\n\nBrand: ' + (deal.brand_name || deal.title) +
+      '\nContact: ' + (deal.contact_name || 'Brand partnerships team') +
+      '\nDeliverables: ' + (deal.deliverables || 'Creator partnership') +
+      '\nTarget value: ' + (deal.deal_value ? '$' + deal.deal_value : 'Not set') +
+      '\nNotes: ' + (deal.notes || '') +
+      '\n\nCreate a specific, credible outreach email with a sharp collaboration angle. Avoid fake claims or invented audience metrics. Return a subject, email body, and short follow-up for four days later.',
     schema
   );
 }
