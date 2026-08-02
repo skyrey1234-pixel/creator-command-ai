@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { generateDailyPlan, loadProfile } from '@/lib/creatorAI';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Clock, Lightbulb, Wand2, ArrowRight, RefreshCw, UserCog, CalendarDays } from 'lucide-react';
+import { Sparkles, Clock, Lightbulb, Wand2, ArrowRight, RefreshCw, CalendarDays } from 'lucide-react';
 
 const typeMeta = {
   content: { icon: Sparkles, tint: 'text-violet-300 bg-violet-500/10' },
