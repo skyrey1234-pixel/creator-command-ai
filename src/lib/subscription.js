@@ -6,24 +6,24 @@ export const PLAN_CATALOG = {
     price: '$0',
     cadence: 'forever',
     description: 'Prove the workflow before you pay.',
-    limits: { contentWeeks: 1, reels: 3, deals: 3 },
-    features: ['1 AI content week', '3 complete Reel scripts', 'Track up to 3 brand deals', 'Creator Brand Profile'],
+    limits: { contentWeeks: 1, reels: 3, deals: 3, performanceAnalyses: 3, repurposeProjects: 1, businessLeads: 3 },
+    features: ['1 AI content week', '3 complete Reel scripts', '3 performance reviews', '1 multi-format repurpose project', 'Track 3 deals and 3 business leads'],
   },
   pro: {
     name: 'Pro',
     price: '$29',
     cadence: 'per month',
     description: 'For creators building consistent content and revenue.',
-    limits: { contentWeeks: 12, reels: 50, deals: 50 },
-    features: ['12 AI content weeks per month', '50 complete Reel scripts', '50 active brand deals', 'AI pricing, media kits & outreach', 'Billing self-service'],
+    limits: { contentWeeks: 12, reels: 50, deals: 50, performanceAnalyses: 30, repurposeProjects: 20, businessLeads: 100 },
+    features: ['12 AI content weeks per month', '50 complete Reel scripts', 'Performance Coach and Trend Matcher', '20 repurpose campaigns', 'Digital Product Builder', '100 business leads', 'Media kits, pricing and outreach'],
   },
   studio: {
     name: 'Studio',
     price: '$79',
     cadence: 'per month',
-    description: 'For high-output creators and small teams.',
-    limits: { contentWeeks: Infinity, reels: Infinity, deals: Infinity },
-    features: ['Unlimited content calendars', 'Unlimited Reel scripts', 'Unlimited deal pipeline', 'AI monetization suite', 'Priority upgrade support'],
+    description: 'For high-output creators and creator-management teams.',
+    limits: { contentWeeks: Infinity, reels: Infinity, deals: Infinity, performanceAnalyses: Infinity, repurposeProjects: Infinity, businessLeads: Infinity },
+    features: ['Everything in Pro', 'Unlimited AI workflows', 'Multi-client agency workspace', 'Retainer and review tracking', 'Unlimited deal and lead pipelines', 'Priority upgrade support'],
   },
 };
 
@@ -67,7 +67,13 @@ export async function saveUpgradeRequest(user, plan) {
   });
 }
 
+const PLAN_ORDER = ['free', 'pro', 'studio'];
+
+export function hasPlan(planKey, minimum) {
+  return PLAN_ORDER.indexOf(planKey || 'free') >= PLAN_ORDER.indexOf(minimum);
+}
+
 export function planAllows(planKey, feature, used = 0) {
   const plan = PLAN_CATALOG[planKey] || PLAN_CATALOG.free;
-  return used < plan.limits[feature];
+  return used < (plan.limits[feature] ?? 0);
 }
