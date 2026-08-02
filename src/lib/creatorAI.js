@@ -220,3 +220,147 @@ export async function generatePitch(profile, brand, goal) {
     schema
   );
 }
+export async function analyzePerformance(metrics, profile) {
+  const schema = {
+    type: 'object',
+    properties: {
+      performance_score: { type: 'number' },
+      summary: { type: 'string' },
+      wins: { type: 'array', items: { type: 'string' } },
+      fixes: { type: 'array', items: { type: 'string' } },
+      next_test: { type: 'string' },
+    },
+  };
+  return llm(
+    `${profileContext(profile)}\n\nAnalyze this real post without inventing missing data:
+Platform: ${metrics.platform}
+Title: ${metrics.content_title}
+Views: ${metrics.views}
+Likes: ${metrics.likes}
+Comments: ${metrics.comments}
+Shares: ${metrics.shares}
+Saves: ${metrics.saves}
+Completion rate: ${metrics.completion_rate}%
+Followers gained: ${metrics.followers_gained}
+
+Score performance from 0-100 relative to the creator's size and goals. Explain the result in plain language, give 2-4 evidence-based wins, 2-4 specific fixes, and one controlled next-post experiment. Do not claim retention drop-off timestamps because they were not provided.`,
+    schema
+  );
+}
+
+export async function generateTrendMatches(profile) {
+  const schema = {
+    type: 'object',
+    properties: {
+      trends: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            platform: { type: 'string', enum: ['instagram', 'tiktok', 'youtube', 'cross_platform'] },
+            trend_name: { type: 'string' },
+            signal: { type: 'string' },
+            source_url: { type: 'string' },
+            fit_score: { type: 'number' },
+            urgency: { type: 'string', enum: ['post_today', 'this_week', 'watch', 'skip'] },
+            fit_reason: { type: 'string' },
+            original_angle: { type: 'string' },
+            avoid_reason: { type: 'string' },
+            hook: { type: 'string' },
+          },
+        },
+      },
+    },
+  };
+  return base44.integrations.Core.InvokeLLM({
+    prompt: `${profileContext(profile)}\n\nFind up to six current short-form content trends or repeatable formats that fit this creator. Prioritize trends with a verifiable public source. For each: platform, specific trend name, evidence signal, source URL when available, fit score 0-100, urgency, why it fits, an original brand-safe angle, when to avoid it, and a ready-to-use hook. Never invent an audio title, popularity metric, or source URL. If verification is weak, call it a repeatable format and set urgency to watch.`,
+    add_context_from_internet: true,
+    response_json_schema: schema,
+  });
+}
+
+export async function repurposeContent(sourceText, sourceType, profile) {
+  const schema = {
+    type: 'object',
+    properties: {
+      title: { type: 'string' },
+      reel_script: { type: 'string' },
+      carousel_slides: { type: 'array', items: { type: 'string' } },
+      story_frames: { type: 'array', items: { type: 'string' } },
+      caption: { type: 'string' },
+      email: { type: 'string' },
+      promo_post: { type: 'string' },
+    },
+  };
+  return llm(
+    `${profileContext(profile)}\n\nSource type: ${sourceType}
+Creator's raw source:
+${sourceText}
+
+Preserve the creator's actual meaning and voice. Turn the source into: a title, a film-ready 30-60 second Reel script, a 6-8 slide carousel, 3-5 Story frames, a complete caption, a concise email, and one promotional message. Do not add personal stories, results, credentials, or promises that are not in the source.`,
+    schema
+  );
+}
+
+export async function draftLeadReply(profile, lead) {
+  const schema = {
+    type: 'object',
+    properties: {
+      classification: { type: 'string', enum: ['brand', 'customer', 'collaboration', 'fan', 'spam'] },
+      estimated_value: { type: 'number' },
+      reply: { type: 'string' },
+      follow_up: { type: 'string' },
+    },
+  };
+  return llm(
+    `${profileContext(profile)}\n\nIncoming ${lead.platform} message from ${lead.contact_name}:
+${lead.incoming_message}
+
+Classify the opportunity. Draft a confident, concise reply in the creator's voice that moves legitimate business inquiries to the next step without accepting terms or inventing rates. Include a short follow-up for three business days later. Estimate value only when the message gives enough commercial context; otherwise return 0.`,
+    schema
+  );
+}
+
+export async function buildDigitalProduct(profile, input) {
+  const schema = {
+    type: 'object',
+    properties: {
+      title: { type: 'string' },
+      promise: { type: 'string' },
+      outline: { type: 'array', items: { type: 'string' } },
+      landing_headline: { type: 'string' },
+      landing_copy: { type: 'string' },
+      launch_plan: { type: 'array', items: { type: 'string' } },
+    },
+  };
+  return llm(
+    `${profileContext(profile)}\n\nProduct idea: ${input.title}
+Format: ${input.product_type}
+Audience: ${input.audience || profile?.audience_description || ''}
+Desired promise: ${input.promise}
+Target price: $${input.price || 0}
+
+Turn this into a credible minimum sellable product. Return a strong title, specific non-hype promise, 5-8 section outline, landing-page headline, conversion-focused landing copy, and a seven-step launch plan using the creator's current content channels. Do not invent testimonials, results, scarcity, or guarantees.`,
+    schema
+  );
+}
+
+export async function generateAgencyPlan(client) {
+  const schema = {
+    type: 'object',
+    properties: {
+      monthly_plan: { type: 'string' },
+    },
+  };
+  return llm(
+    `Create a concise monthly creator-management action plan for:
+Client: ${client.client_name}
+Brand: ${client.brand_name}
+Niche: ${client.niche}
+Goals: ${client.goals}
+Monthly fee: $${client.monthly_fee || 0}
+
+Use four sections: Outcomes, Weekly Content Cadence, Revenue Actions, and Review Metrics. Make the scope realistic for the stated retainer and do not invent business data.`,
+    schema
+  );
+}
