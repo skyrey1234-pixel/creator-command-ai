@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { jsPDF } from 'jspdf';
 import { base44 } from '@/api/base44Client';
 import { loadProfile, generateMediaKit, calculatePricing, generatePitch } from '@/lib/creatorAI';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { BriefcaseBusiness, DollarSign, FileText, Mail, Wand2, ArrowRight, Sparkles, Check } from 'lucide-react';
+import { BriefcaseBusiness, DollarSign, Download, FileText, Mail, Wand2, ArrowRight, Sparkles, Check } from 'lucide-react';
 
 function Card({ children, className = '' }) {
   return <div className={`rounded-3xl border border-border bg-card/60 p-6 card-glow ${className}`}>{children}</div>;
@@ -68,6 +69,36 @@ export default function Monetize() {
     } finally {
       setKitLoading(false);
     }
+  };
+
+  const downloadKit = () => {
+    if (!kit || !profile) return;
+    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+    const left = 54;
+    let y = 58;
+    const write = (text, size = 11, gap = 8) => {
+      doc.setFontSize(size);
+      const lines = doc.splitTextToSize(String(text || ''), 500);
+      doc.text(lines, left, y);
+      y += lines.length * (size + 3) + gap;
+      if (y > 700) { doc.addPage(); y = 58; }
+    };
+    doc.setTextColor(92, 45, 200);
+    write(kit.headline, 22, 12);
+    doc.setTextColor(35, 35, 45);
+    write(kit.bio, 11, 12);
+    write(kit.stats_summary, 10, 16);
+    write('AUDIENCE', 10, 5);
+    (kit.audience_highlights || []).forEach((item) => write('• ' + item, 10, 2));
+    y += 8;
+    write('CAMPAIGN PACKAGES', 10, 5);
+    (kit.packages || []).forEach((item) => write(item.name + ' — ' + item.price + '\n' + item.deliverables, 10, 7));
+    write('WHY PARTNER', 10, 5);
+    (kit.differentiators || []).forEach((item) => write('• ' + item, 10, 2));
+    y += 10;
+    write(kit.contact_cta, 11, 0);
+    const filename = String(profile.brand_name || 'creator').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-media-kit.pdf';
+    doc.save(filename);
   };
 
   const runPitch = async (e) => {
@@ -192,11 +223,14 @@ export default function Monetize() {
 
       {tab === 'kit' && (
         <Card>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="font-display font-bold text-lg flex items-center gap-2"><FileText className="w-5 h-5 text-primary" /> Media Kit</h3>
-            <Button onClick={runKit} disabled={kitLoading || !profile} className="gradient-bg border-0 hover:opacity-90">
-              <Wand2 className={`w-4 h-4 mr-2 ${kitLoading ? 'animate-spin' : ''}`} /> {kit ? 'Regenerate' : 'Generate media kit'}
-            </Button>
+            <div className="flex gap-2">
+              {kit && <Button onClick={downloadKit} variant="outline"><Download className="w-4 h-4 mr-2" /> Download PDF</Button>}
+              <Button onClick={runKit} disabled={kitLoading || !profile} className="gradient-bg border-0 hover:opacity-90">
+                <Wand2 className={`w-4 h-4 mr-2 ${kitLoading ? 'animate-spin' : ''}`} /> {kit ? 'Regenerate' : 'Generate media kit'}
+              </Button>
+            </div>
           </div>
           {kitLoading ? (
             <div className="text-center text-muted-foreground py-10"><Wand2 className="w-5 h-5 animate-spin mx-auto mb-3" /> Building your kit…</div>
