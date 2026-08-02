@@ -16,6 +16,8 @@ import CreatorTwin from '@/pages/CreatorTwin';
 import Monetize from '@/pages/Monetize';
 import Deals from '@/pages/Deals';
 import Plans from '@/pages/Plans';
+import GrowthLab from '@/pages/GrowthLab';
+import BusinessOS from '@/pages/BusinessOS';
 import BrandBrain from '@/pages/BrandBrain';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -62,6 +64,8 @@ const AuthenticatedApp = () => {
           <Route path="/monetize" element={<Monetize />} />
           <Route path="/brand-brain" element={<BrandBrain />} />
           <Route path="/plans" element={<Plans />} />
+          <Route path="/growth" element={<GrowthLab />} />
+          <Route path="/business" element={<BusinessOS />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
