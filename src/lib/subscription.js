@@ -6,7 +6,7 @@ export const PLAN_CATALOG = {
     price: '$0',
     cadence: 'forever',
     description: 'Prove the workflow before you pay.',
-    limits: { contentWeeks: 1, reels: 3, deals: 3, performanceAnalyses: 3, repurposeProjects: 1, businessLeads: 3 },
+    limits: { contentWeeks: 1, reels: 3, deals: 3, performanceAnalyses: 3, repurposeProjects: 1, businessLeads: 3, forgePosts: 4 },
     features: ['1 AI content week', '3 complete Reel scripts', '3 performance reviews', '1 multi-format repurpose project', 'Track 3 deals and 3 business leads'],
   },
   pro: {
@@ -14,7 +14,7 @@ export const PLAN_CATALOG = {
     price: '$29',
     cadence: 'per month',
     description: 'For creators building consistent content and revenue.',
-    limits: { contentWeeks: 12, reels: 50, deals: 50, performanceAnalyses: 30, repurposeProjects: 20, businessLeads: 100 },
+    limits: { contentWeeks: 12, reels: 50, deals: 50, performanceAnalyses: 30, repurposeProjects: 20, businessLeads: 100, forgePosts: 40 },
     features: ['12 AI content weeks per month', '50 complete Reel scripts', 'Performance Coach and Trend Matcher', '20 repurpose campaigns', 'Digital Product Builder', '100 business leads', 'Media kits, pricing and outreach'],
   },
   studio: {
@@ -22,7 +22,7 @@ export const PLAN_CATALOG = {
     price: '$79',
     cadence: 'per month',
     description: 'For high-output creators and creator-management teams.',
-    limits: { contentWeeks: Infinity, reels: Infinity, deals: Infinity, performanceAnalyses: Infinity, repurposeProjects: Infinity, businessLeads: Infinity },
+    limits: { contentWeeks: Infinity, reels: Infinity, deals: Infinity, performanceAnalyses: Infinity, repurposeProjects: Infinity, businessLeads: Infinity, forgePosts: Infinity },
     features: ['Everything in Pro', 'Unlimited AI workflows', 'Multi-client agency workspace', 'Retainer and review tracking', 'Unlimited deal and lead pipelines', 'Priority upgrade support'],
   },
 };

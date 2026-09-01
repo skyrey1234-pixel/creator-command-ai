@@ -77,6 +77,9 @@
     "external_post_url": {
       "type": "string"
     },
+    "image_url": {
+      "type": "string"
+    },
     "status": {
       "type": "string",
       "enum": [

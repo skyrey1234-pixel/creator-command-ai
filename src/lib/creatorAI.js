@@ -364,3 +364,61 @@ Use four sections: Outcomes, Weekly Content Cadence, Revenue Actions, and Review
     schema
   );
 }
+
+export async function generateContentBatch(sourceText, sourceType, profile) {
+  const schema = {
+    type: 'object',
+    properties: {
+      title: { type: 'string' },
+      posts: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            type: { type: 'string', enum: ['reel', 'carousel', 'post', 'story'] },
+            title: { type: 'string' },
+            hook: { type: 'string' },
+            caption: { type: 'string' },
+            hashtags: { type: 'array', items: { type: 'string' } },
+            image_prompt: { type: 'string' },
+            visual_style: { type: 'string' },
+          },
+        },
+      },
+      reel: {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          hook: { type: 'string' },
+          spoken_script: { type: 'string' },
+          shot_list: { type: 'array', items: { type: 'string' } },
+          on_screen_text: { type: 'array', items: { type: 'string' } },
+          caption: { type: 'string' },
+          video_length: { type: 'string' },
+          cta: { type: 'string' },
+          thumbnail_idea: { type: 'string' },
+        },
+      },
+    },
+  };
+  return llm(
+    `${profileContext(profile)}
+
+Creator's raw source (${sourceType}):
+${sourceText}
+
+Turn this real material into a ready-to-post content batch for this creator, in their voice and visual style.
+- title: a short batch name.
+- posts: exactly 4 distinct post concepts mixing reels, carousels, and single posts. Each needs a scroll-stopping hook, a complete caption in their tone, 5-8 on-brand hashtags, a detailed image_prompt for an AI image generator (subject, composition, lighting, mood — NO text or words in the image), and a short visual_style note.
+- reel: one film-ready short-form video script from the strongest angle: title, opening hook, word-for-word spoken script, a shot list, on-screen text lines, caption, ideal video length, ending CTA, and thumbnail idea.
+Preserve the creator's actual meaning. Do not invent credentials, results, or quotes that are not in the source.`,
+    schema
+  );
+}
+
+export async function generateBatchImage(post, profile) {
+  const style = [post.visual_style, profile?.visual_style].filter(Boolean).join('. ');
+  const prompt = `${style ? style + '. ' : ''}Content visual: ${post.image_prompt}. Photographic, high quality, cinematic lighting, square composition, no text, no words, no watermark.`;
+  const res = await base44.integrations.Core.GenerateImage({ prompt });
+  return res?.url || res?.file_url || '';
+}
