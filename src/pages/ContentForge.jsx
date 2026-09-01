@@ -33,6 +33,10 @@ const STAGES = {
   saving: 'Saving your batch…',
 };
 
+// Whisper transcription caps single files at 25MB.
+const MAX_FILE_BYTES = 25 * 1024 * 1024;
+const fmtSize = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`);
+
 export default function ContentForge() {
   const [profile, setProfile] = useState(undefined);
   const [subscription, setSubscription] = useState(null);
@@ -42,8 +46,15 @@ export default function ContentForge() {
   const [stage, setStage] = useState('idle');
   const [batch, setBatch] = useState(null);
   const [message, setMessage] = useState('');
+  const [fileWarning, setFileWarning] = useState('');
   const [copied, setCopied] = useState('');
   const fileRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const f = e.target.files?.[0] || null;
+    setFile(f);
+    setFileWarning(f && f.size > MAX_FILE_BYTES ? `That file is ${fmtSize(f.size)} — transcription supports up to 25MB. Trim it down, or paste a transcript instead.` : '');
+  };
 
   const reload = async () => {
     const [p, s, forged] = await Promise.all([
@@ -77,12 +88,23 @@ export default function ContentForge() {
       let combined = source.source_text.trim();
 
       if (file) {
-        setStage('upload');
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        setStage('transcribe');
-        const transcript = await base44.integrations.Core.TranscribeAudio({ audio_url: file_url });
-        const text = typeof transcript === 'string' ? transcript : transcript?.text || '';
-        combined = (combined ? combined + '\n\n' : '') + text.trim();
+        if (file.size > MAX_FILE_BYTES) {
+          setMessage(`That file is ${fmtSize(file.size)} — transcription supports up to 25MB. Trim it shorter or paste the transcript into the notes box.`);
+          setStage('idle');
+          return;
+        }
+        try {
+          setStage('upload');
+          const { file_url } = await base44.integrations.Core.UploadFile({ file });
+          setStage('transcribe');
+          const transcript = await base44.integrations.Core.TranscribeAudio({ audio_url: file_url });
+          const text = typeof transcript === 'string' ? transcript : transcript?.text || '';
+          combined = (combined ? combined + '\n\n' : '') + text.trim();
+        } catch (err) {
+          setMessage(`Upload or transcription failed${err?.message ? `: ${err.message}` : ''}. For videos over 25MB, trim the clip or paste a transcript into the notes box.`);
+          setStage('idle');
+          return;
+        }
       }
 
       if (!combined) {
@@ -209,7 +231,9 @@ export default function ContentForge() {
                       <div className="text-xs text-muted-foreground mt-0.5">mp4, mov, mp3, wav, m4a — we pull the audio and transcribe it.</div>
                     </div>
                   </button>
-                  <input ref={fileRef} type="file" accept="audio/*,video/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+                  <input ref={fileRef} type="file" accept="audio/*,video/*" className="hidden" onChange={handleFileChange} />
+                  {file && <div className="text-xs text-muted-foreground mt-1.5">{fmtSize(file.size)}{file.size > MAX_FILE_BYTES ? ' · too large for transcription' : ''}</div>}
+                  {fileWarning && <div className="text-xs text-destructive mt-1.5">{fileWarning}</div>}
                 </div>
                 <Button type="submit" disabled={busy} className="w-full gradient-bg border-0">
                   <Wand2 className={`w-4 h-4 mr-2 ${busy ? 'animate-spin' : ''}`} />
