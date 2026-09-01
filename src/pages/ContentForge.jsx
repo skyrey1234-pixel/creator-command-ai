@@ -36,6 +36,9 @@ const STAGES = {
 // Whisper transcription caps single files at 25MB.
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const fmtSize = (bytes) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`);
+// Whisper-supported input extensions (mp4 yes, mov/no).
+const SUPPORTED_EXT = ['flac', 'm4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'oga', 'ogg', 'wav', 'webm'];
+const ACCEPT_ATTR = SUPPORTED_EXT.map((e) => `.${e}`).join(',');
 
 export default function ContentForge() {
   const [profile, setProfile] = useState(undefined);
@@ -52,8 +55,12 @@ export default function ContentForge() {
 
   const handleFileChange = (e) => {
     const f = e.target.files?.[0] || null;
+    const ext = f ? f.name.split('.').pop()?.toLowerCase() : '';
+    let warn = '';
+    if (f && !SUPPORTED_EXT.includes(ext)) warn = `.${ext} isn't supported. Use mp4, m4a, mp3, wav, webm, or ogg — convert a .mov to .mp4 first, or paste the transcript into the notes box.`;
+    else if (f && f.size > MAX_FILE_BYTES) warn = `That file is ${fmtSize(f.size)} — transcription supports up to 25MB. Trim it down, or paste a transcript instead.`;
     setFile(f);
-    setFileWarning(f && f.size > MAX_FILE_BYTES ? `That file is ${fmtSize(f.size)} — transcription supports up to 25MB. Trim it down, or paste a transcript instead.` : '');
+    setFileWarning(warn);
   };
 
   const reload = async () => {
@@ -88,6 +95,12 @@ export default function ContentForge() {
       let combined = source.source_text.trim();
 
       if (file) {
+        const ext = file.name.split('.').pop()?.toLowerCase();
+        if (!SUPPORTED_EXT.includes(ext)) {
+          setMessage(`.${ext} isn't supported by transcription. Use mp4, m4a, mp3, wav, webm, or ogg — convert .mov to .mp4, or paste the transcript into the notes box.`);
+          setStage('idle');
+          return;
+        }
         if (file.size > MAX_FILE_BYTES) {
           setMessage(`That file is ${fmtSize(file.size)} — transcription supports up to 25MB. Trim it shorter or paste the transcript into the notes box.`);
           setStage('idle');
@@ -228,10 +241,10 @@ export default function ContentForge() {
                     <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0"><Upload className="w-5 h-5" /></div>
                     <div className="min-w-0">
                       <div className="text-sm font-medium truncate">{file ? file.name : 'Choose a file to transcribe'}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">mp4, mov, mp3, wav, m4a — we pull the audio and transcribe it.</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">mp4, m4a, mp3, wav, webm, ogg — we transcribe the audio. Convert .mov to .mp4 first.</div>
                     </div>
                   </button>
-                  <input ref={fileRef} type="file" accept="audio/*,video/*" className="hidden" onChange={handleFileChange} />
+                  <input ref={fileRef} type="file" accept={ACCEPT_ATTR} className="hidden" onChange={handleFileChange} />
                   {file && <div className="text-xs text-muted-foreground mt-1.5">{fmtSize(file.size)}{file.size > MAX_FILE_BYTES ? ' · too large for transcription' : ''}</div>}
                   {fileWarning && <div className="text-xs text-destructive mt-1.5">{fileWarning}</div>}
                 </div>
